@@ -1,3 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoreTask - Project Management</title>
+    <meta name="description" content="Sistema de gestión de proyectos y tareas profesional">
+    <meta name="author" content="Gabriel Torres">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTkgMTJMMTEgMTRMMTUgMTBNMjEgMTJDMjEgMTYuOTcwNiAxNi45NzA2IDIxIDEyIDIxQzcuMDI5NDQgMjEgMyAxNi45NzA2IDMgMTJDMyA3LjAyOTQ0IDcuMDI5NDQgMyAxMiAzQzE2Ljk3MDYgMyAyMSA3LjAyOTQ0IDIxIDEyWiIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h2>CoreTask</h2>
+            <p>Cargando sistema de gestión...</p>
+        </div>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="login-screen hidden">
+        <div class="login-container">
+            <div class="login-header">
+                <h1>CoreTask</h1>
+                <p>Sistema de Gestión de Proyectos</p>
+            </div>
+            
+            <form id="login-form" class="login-form">
+                <div id="login-error" class="error-message hidden"></div>
+                
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" required autocomplete="email">
+                </div>
+                
+                <div class="form-group">
+                    <label for="login-password">Contraseña</label>
+                    <input type="password" id="login-password" required autocomplete="current-password">
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block">
+                    <span id="login-text">Iniciar Sesión</span>
+                    <div id="login-spinner" class="spinner hidden"></div>
+                </button>
+            </form>
+            
+            <div class="login-footer">
+                <p>📧 Admin: gabritorres281096@gmail.com</p>
+                <p>🔑 Password: 290719Lucia</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="app" class="app hidden">
+        <!-- Navigation Bar -->
+        <nav class="navbar">
+            <div class="navbar-brand">
+                <h1>CoreTask</h1>
+            </div>
+            
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" onclick="showPage('dashboard')" data-page="dashboard">
+                        <span class="nav-icon">📊</span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showPage('projects')" data-page="projects">
+                        <span class="nav-icon">📁</span>
+                        <span>Proyectos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showPage('tasks')" data-page="tasks">
+                        <span class="nav-icon">📋</span>
+                        <span>Tareas</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showPage('integrations')" data-page="integrations">
+                        <span class="nav-icon">🔗</span>
+                        <span>Integraciones</span>
+                    </a>
+                </li>
+                <li class="nav-item admin-only">
+                    <a href="#" class="nav-link" onclick="showPage('admin')" data-page="admin">
+                        <span class="nav-icon">⚙️</span>
+                        <span>Admin</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="navbar-user">
+                <div class="user-menu">
+                    <button class="user-menu-btn" id="user-menu-btn">
+                        <span class="user-avatar">👤</span>
+                        <span id="user-name">Usuario</span>
+                        <span class="user-arrow">▼</span>
+                    </button>
+                    <div class="user-dropdown hidden" id="user-menu">
+                        <a href="#" onclick="showProfile()">👤 Mi Perfil</a>
+                        <a href="#" onclick="changePassword()">🔑 Cambiar Contraseña</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" onclick="logout()" class="text-danger">🚪 Cerrar Sesión</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <!-- Quick Actions -->
+                <div class="sidebar-section">
+                    <h3>Acciones Rápidas</h3>
+                    <div class="quick-actions">
+                        <button class="btn btn-primary btn-sm" onclick="openProjectModal()">
+                            ➕ Nuevo Proyecto
+                        </button>
+                        <button class="btn btn-secondary btn-sm" onclick="openTaskModal()">
+                            📋 Nueva Tarea
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="sidebar-section">
+                    <h3>Filtros</h3>
+                    <div class="filter-list">
+                        <div class="sidebar-item active" onclick="filterTasks('all')">
+                            <span class="filter-icon">📋</span>
+                            <span>Todas las tareas</span>
+                        </div>
+                        <div class="sidebar-item" onclick="filterTasks('assigned')">
+                            <span class="filter-icon">👤</span>
+                            <span>Asignadas a mí</span>
+                        </div>
+                        <div class="sidebar-item" onclick="filterTasks('todo')">
+                            <span class="filter-icon">⏳</span>
+                            <span>Por hacer</span>
+                        </div>
+                        <div class="sidebar-item" onclick="filterTasks('in_progress')">
+                            <span class="filter-icon">🔄</span>
+                            <span>En progreso</span>
+                        </div>
+                        <div class="sidebar-item" onclick="filterTasks('done')">
+                            <span class="filter-icon">✅</span>
+                            <span>Completadas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="sidebar-section">
+                    <h3>Actividad Reciente</h3>
+                    <div id="recent-activity" class="activity-list">
+                        <!-- Activity items will be loaded here -->
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Page Content -->
+            <div class="page-content">
+                <!-- Dashboard Page -->
+                <div id="dashboard-page" class="page active">
+                    <div class="page-header">
+                        <h2>Dashboard</h2>
+                        <button class="btn btn-secondary" onclick="refreshDashboard()">
+                            🔄 Actualizar
+                        </button>
+                    </div>
+
+                    <!-- Statistics Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">📁</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="total-projects">0</div>
+                                <div class="stat-label">Proyectos</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">📋</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="total-tasks">0</div>
+                                <div class="stat-label">Tareas</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">✅</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="completed-tasks">0</div>
+                                <div class="stat-label">Completadas</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">⏰</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="overdue-tasks">0</div>
+                                <div class="stat-label">Vencidas</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dashboard Content Grid -->
+                    <div class="dashboard-grid">
+                        <!-- Recent Tasks -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3>Tareas Recientes</h3>
+                                <a href="#" onclick="showPage('tasks')" class="card-link">Ver todas</a>
+                            </div>
+                            <div class="card-content">
+                                <div id="recent-tasks" class="task-list">
+                                    <!-- Tasks will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Active Projects -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3>Proyectos Activos</h3>
+                                <a href="#" onclick="showPage('projects')" class="card-link">Ver todos</a>
+                            </div>
+                            <div class="card-content">
+                                <div id="active-projects" class="projects-list">
+                                    <!-- Projects will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projects Page -->
+                <div id="projects-page" class="page hidden">
+                    <div class="page-header">
+                        <h2>Proyectos</h2>
+                        <div class="page-actions">
+                            <div class="search-box">
+                                <input type="text" id="project-search" placeholder="Buscar proyectos..." onkeyup="searchProjects()">
+                            </div>
+                            <button class="btn btn-primary" onclick="openProjectModal()">
+                                ➕ Nuevo Proyecto
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="projects-grid" class="projects-grid">
+                        <!-- Projects will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Tasks Page -->
+                <div id="tasks-page" class="page hidden">
+                    <div class="page-header">
+                        <h2>Tareas</h2>
+                        <div class="page-actions">
+                            <div class="search-box">
+                                <input type="text" id="task-search" placeholder="Buscar tareas..." onkeyup="searchTasks()">
+                            </div>
+                            <select class="form-select" id="task-filter" onchange="filterTasksTable()">
+                                <option value="">Todos los estados</option>
+                                <option value="todo">Por hacer</option>
+                                <option value="in_progress">En progreso</option>
+                                <option value="review">En revisión</option>
+                                <option value="done">Completadas</option>
+                            </select>
+                            <button class="btn btn-primary" onclick="openTaskModal()">
+                                📋 Nueva Tarea
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="data-table" id="tasks-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Título</th>
+                                    <th>Proyecto</th>
+                                    <th>Asignado</th>
+                                    <th>Estado</th>
+                                    <th>Prioridad</th>
+                                    <th>Fecha Límite</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tasks-table-body">
+                                <!-- Tasks will be loaded here -->
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -356,10 +652,319 @@
         </div>
     </div>
 
+    <!-- Profile Modal -->
+    <div id="profile-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Mi Perfil</h3>
+                <button class="modal-close" onclick="closeModal('profile-modal')">&times;</button>
+            </div>
+            <form id="profile-form" class="modal-form">
+                <div class="form-group">
+                    <label for="profile-email">Email</label>
+                    <input type="email" id="profile-email" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="profile-name">Nombre completo *</label>
+                    <input type="text" id="profile-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="profile-role">Rol</label>
+                    <input type="text" id="profile-role" readonly>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('profile-modal')">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <span id="profile-submit-text">Actualizar Perfil</span>
+                        <span id="profile-submit-spinner" class="spinner hidden"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="password-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Cambiar Contraseña</h3>
+                <button class="modal-close" onclick="closeModal('password-modal')">&times;</button>
+            </div>
+            <form id="password-form" class="modal-form">
+                <div class="form-group">
+                    <label for="current-password">Contraseña actual *</label>
+                    <input type="password" id="current-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-password">Nueva contraseña *</label>
+                    <input type="password" id="new-password" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">Confirmar nueva contraseña *</label>
+                    <input type="password" id="confirm-password" required minlength="6">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('password-modal')">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <span id="password-submit-text">Cambiar Contraseña</span>
+                        <span id="password-submit-spinner" class="spinner hidden"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Task Detail Modal -->
+    <div id="task-detail-modal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3 id="task-detail-title">Detalle de Tarea</h3>
+                <button class="modal-close" onclick="closeModal('task-detail-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="task-detail-content">
+                    <div class="task-detail-main">
+                        <div class="task-header">
+                            <h4 id="task-detail-name">Nombre de la tarea</h4>
+                            <div class="task-badges">
+                                <span id="task-detail-status" class="status-badge">Estado</span>
+                                <span id="task-detail-priority" class="status-badge">Prioridad</span>
+                                <span id="task-detail-type" class="status-badge">Tipo</span>
+                            </div>
+                        </div>
+                        
+                        <div class="task-description">
+                            <h5>Descripción</h5>
+                            <p id="task-detail-description">Descripción de la tarea...</p>
+                        </div>
+
+                        <div class="task-comments">
+                            <h5>Comentarios</h5>
+                            <div id="task-comments-list" class="comments-list">
+                                <!-- Comments will be loaded here -->
+                            </div>
+                            <form id="comment-form" class="comment-form">
+                                <textarea id="comment-text" placeholder="Añadir un comentario..." rows="3"></textarea>
+                                <button type="submit" class="btn btn-primary btn-sm">Comentar</button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="task-detail-sidebar">
+                        <div class="task-info-section">
+                            <h5>Información</h5>
+                            <div class="info-item">
+                                <span class="info-label">ID:</span>
+                                <span id="task-detail-id">TASK-001</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Proyecto:</span>
+                                <span id="task-detail-project">Proyecto</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Asignado a:</span>
+                                <span id="task-detail-assignee">Sin asignar</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Creado por:</span>
+                                <span id="task-detail-creator">Usuario</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Fecha límite:</span>
+                                <span id="task-detail-due-date">Sin fecha</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Horas estimadas:</span>
+                                <span id="task-detail-estimated-hours">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Creado:</span>
+                                <span id="task-detail-created">Fecha</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Actualizado:</span>
+                                <span id="task-detail-updated">Fecha</span>
+                            </div>
+                        </div>
+
+                        <div class="task-actions-section">
+                            <h5>Acciones</h5>
+                            <div class="task-actions-buttons">
+                                <button class="btn btn-primary btn-sm" onclick="editTaskFromDetail()">
+                                    ✏️ Editar
+                                </button>
+                                <button class="btn btn-secondary btn-sm" onclick="changeTaskStatusFromDetail()">
+                                    🔄 Cambiar Estado
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteTaskFromDetail()">
+                                    🗑️ Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Notification container -->
     <div id="notifications" class="notifications-container"></div>
 
+    <!-- Loading overlay for actions -->
+    <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="loading-spinner"></div>
+    </div>
+
     <!-- Scripts -->
+    <script>
+        // Global functions for page navigation
+        function showPage(pageName) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+                page.classList.add('hidden');
+            });
+            
+            // Show selected page
+            const targetPage = document.getElementById(pageName + '-page');
+            if (targetPage) {
+                targetPage.classList.add('active');
+                targetPage.classList.remove('hidden');
+            }
+            
+            // Update navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            const activeLink = document.querySelector(`[data-page="${pageName}"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+            
+            // Load page-specific data
+            if (window.app && window.app.loadPage) {
+                window.app.loadPage(pageName);
+            }
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('active');
+            }
+        });
+
+        // Prevent modal close when clicking inside modal content
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.modal-content')) {
+                e.stopPropagation();
+            }
+        });
+
+        // Handle Escape key to close modals
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const activeModal = document.querySelector('.modal.active');
+                if (activeModal) {
+                    activeModal.classList.remove('active');
+                }
+            }
+        });
+
+        // Auto-hide notifications
+        function autoHideNotification(notification, delay = 5000) {
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.style.opacity = '0';
+                    notification.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        if (notification.parentElement) {
+                            notification.remove();
+                        }
+                    }, 300);
+                }
+            }, delay);
+        }
+
+        // Initialize tooltips
+        function initTooltips() {
+            const tooltipElements = document.querySelectorAll('[title]');
+            tooltipElements.forEach(element => {
+                element.addEventListener('mouseenter', function() {
+                    // Create and show tooltip
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'tooltip';
+                    tooltip.textContent = this.getAttribute('title');
+                    document.body.appendChild(tooltip);
+                    
+                    // Position tooltip
+                    const rect = this.getBoundingClientRect();
+                    tooltip.style.left = rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2) + 'px';
+                    tooltip.style.top = rect.top - tooltip.offsetHeight - 10 + 'px';
+                });
+                
+                element.addEventListener('mouseleave', function() {
+                    const tooltip = document.querySelector('.tooltip');
+                    if (tooltip) {
+                        tooltip.remove();
+                    }
+                });
+            });
+        }
+
+        // Initialize keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + K for quick search
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                const searchInput = document.querySelector('#task-search, #project-search');
+                if (searchInput) {
+                    searchInput.focus();
+                }
+            }
+            
+            // Ctrl/Cmd + N for new task
+            if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                e.preventDefault();
+                if (window.openTaskModal) {
+                    window.openTaskModal();
+                }
+            }
+            
+            // Ctrl/Cmd + Shift + N for new project
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'N') {
+                e.preventDefault();
+                if (window.openProjectModal) {
+                    window.openProjectModal();
+                }
+            }
+        });
+
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(function(registrationError) {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+
+        // Initialize app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 CoreTask Application Starting...');
+            initTooltips();
+        });
+    </script>
+    
     <script src="js/storage.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/projects.js"></script>
